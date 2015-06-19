@@ -9,8 +9,6 @@ server {
 
     server_name myb.lt www.myb.lt;
 
-    #rewrite ^/( ... )$ / last;
-
     access_log off;
     error_log off;
 
