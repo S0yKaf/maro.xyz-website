@@ -3,6 +3,11 @@
           <h1>My BLT</h1>
     </div>
 
-    {{test}}
+    <div ng-app="fileUpload">
+        <div class="button" ngf-select ng-model="file">Select file here</div>
+
+        <button ngf-drop ng-model="file" class="drop-box" ngf-drag-over-class="dragover">Drop file here</button>
+        <div ngf-no-file-drop>File Drag/Drop is not supported for this browser</div>
+    </div>
 
 </div>
