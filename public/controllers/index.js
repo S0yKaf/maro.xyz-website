@@ -4,13 +4,13 @@ controllers.controller('Index', function($scope, Upload) {
 
     $scope.upload = function(file) {
         Upload.upload({
-            url: '/api/upload',
+            url: 'http://localhost:5000/upload',
             file: file
         }).progress(function (evt) {
             var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
             console.log('progress: ' + progressPercentage + '% ' + evt.config.file.name);
         }).success(function (data, status, headers, config) {
-            console.log('file ' + config.file.name + 'uploaded. Response: ' + data);
+            console.log('file ' + file[0].name + ' uploaded');
         });
     }
 });
