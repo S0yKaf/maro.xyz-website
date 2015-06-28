@@ -56,6 +56,8 @@ def upload_file():
         filename = secure_filename(file.filename)
         file_hash_str = str(binascii.hexlify(file_hash_bin).decode('utf8'))
         abs_file = os.path.join(app.config['UPLOAD_FOLDER'], file_hash_str)
+
+        file.stream.seek(0)
         file.save(abs_file)
 
         # Generate a short url
@@ -76,8 +78,10 @@ def upload_file():
 
 @app.route('/upload/<short_url>', methods=['GET'])
 def get_upload(short_url):
-    # TODO resolve short url to hash
-    return send_from_directory(app.config['UPLOAD_FOLDER'], short_url)
+    upload = Upload.query.filter(Upload.short_url == short_url).first()
+    hash_str = str(binascii.hexlify(upload.hash).decode('utf8'))
+
+    return send_from_directory(app.config['UPLOAD_FOLDER'], hash_str)
 
 @app.teardown_appcontext
 def shutdown_session(exception=None):
