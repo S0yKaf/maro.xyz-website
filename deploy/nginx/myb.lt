@@ -12,12 +12,29 @@ server {
     access_log off;
     error_log off;
 
+    # Allow to contact api on same domain
     location /api/ {
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $remote_addr;
         proxy_set_header Host $http_host;
         proxy_set_header X-NginX-Proxy true;
 
-        proxy_pass http://app_myblt/api/;
+        proxy_pass http://app_myblt/;
+    }
+}
+
+server {
+    server_name a.myb.lt;
+
+    access_log off;
+    error_log off;
+
+    location / {
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $remote_addr;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-NginX-Proxy true;
+
+        proxy_pass http://app_myblt/;
     }
 }
