@@ -10,7 +10,6 @@ from models import Upload
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = '/tmp/uploads'
-app.config['BASE_URL'] = 'http://myb.lt/'
 app.config['API_URL'] = 'http://a.myb.lt/'
 
 
@@ -58,7 +57,7 @@ def upload_file():
 
         # Generate a short url
         short_id = get_new_short_url()
-        short_url = app.config['API_URL'] + 'upload/' + short_id
+        short_url = app.config['API_URL'] + short_id
 
         # TODO add real mime type
         # Add upload in DB
@@ -68,11 +67,11 @@ def upload_file():
     else:
         # Get old (identical) file's short_url from the hash
         og_upload = Upload.query.filter(Upload.hash == file_hash_bin).first()
-        short_url =  app.config['API_URL'] + 'upload/' + og_upload.short_url
+        short_url =  app.config['API_URL'] + og_upload.short_url
 
     return jsonify(short_url=short_url)
 
-@app.route('/upload/<short_url>', methods=['GET'])
+@app.route('/<short_url>', methods=['GET'])
 def get_upload(short_url):
     upload = Upload.query.filter(Upload.short_url == short_url).first()
     hash_str = str(binascii.hexlify(upload.hash).decode('utf8'))
