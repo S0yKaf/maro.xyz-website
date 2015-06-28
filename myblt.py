@@ -16,15 +16,29 @@ app.config['BASE_URL'] = 'http://myb.lt:5000/'
 
 cors = CORS(app, resources={r"*": {"origins": "*"}})
 
-def contains_hash(hash):
+def hash_exists(hash):
     return Upload.query.filter(Upload.hash == hash).count() != 0
 
-def get_new_short_url():
-    # TODO check if short_id is unique
+def short_url_exists(url):
+    return Upload.query.filter(Upload.short_url == url).count() != 0
+
+def get_random_short_url():
+    """Generates a random string of 7 ascii letters and digits
+    Can provide in the order or 10^12 unique strings
+    """
     chars = []
     for x in range(7):
         chars.append(random.choice(string.ascii_letters + string.digits))
     return ''.join(chars)
+
+def get_new_short_url():
+    """Generate random urls until a new one is generated"""
+    url = None
+    while not url:
+        url = get_random_short_url()
+        if short_url_exists(url):
+            url = None
+    return url
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
@@ -37,7 +51,7 @@ def upload_file():
     m.update(file.read())
     file_hash_bin = m.digest()
 
-    if not contains_hash(file_hash_bin):
+    if not hash_exists(file_hash_bin):
         # Save new file to uploads folder
         filename = secure_filename(file.filename)
         file_hash_str = str(binascii.hexlify(file_hash_bin).decode('utf8'))
