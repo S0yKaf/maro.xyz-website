@@ -69,9 +69,8 @@ def upload_file():
         db_session.commit()
     else:
         # Get old (identical) file's short_url from the hash
-        # TODO give link to user of same file
-        short_url =  app.config['BASE_URL'] + 'upload/' + 'TODO'
-        pass
+        og_upload = Upload.query.filter(Upload.hash == file_hash_bin).first()
+        short_url =  app.config['BASE_URL'] + 'upload/' + og_upload.short_url
 
     return jsonify(short_url=short_url)
 
