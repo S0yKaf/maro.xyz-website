@@ -26,10 +26,8 @@ def get_random_short_url():
     """Generates a random string of 7 ascii letters and digits
     Can provide in the order or 10^12 unique strings
     """
-    chars = []
-    for x in range(7):
-        chars.append(random.choice(string.ascii_letters + string.digits))
-    return ''.join(chars)
+    pool = string.ascii_letters + string.digits
+    return ''.join(random.choice(pool) for _ in range(7))
 
 def get_new_short_url():
     """Generate random urls until a new one is generated"""
