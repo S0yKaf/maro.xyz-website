@@ -27,7 +27,7 @@ def upload_file():
     return jsonify(uploaded_file=filename, short_url=short_url)
 
 @app.route('/upload/<filename>', methods=['GET'])
-def uploaded_file(filename):
+def get_upload(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 if __name__ == "__main__":
