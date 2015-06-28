@@ -20,6 +20,8 @@ def hash_exists(hash):
     return Upload.query.filter(Upload.hash == hash).count() != 0
 
 def short_url_exists(url):
+    if not url:
+        return True
     return Upload.query.filter(Upload.short_url == url).count() != 0
 
 def get_random_short_url():
@@ -32,10 +34,8 @@ def get_random_short_url():
 def get_new_short_url():
     """Generate random urls until a new one is generated"""
     url = None
-    while not url:
+    while short_url_exists(url):
         url = get_random_short_url()
-        if short_url_exists(url):
-            url = None
     return url
 
 @app.route('/upload', methods=['POST'])
