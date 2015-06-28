@@ -4,17 +4,15 @@ import binascii
 import string, random
 
 from flask import Flask, request, send_from_directory, jsonify
-from flask.ext.cors import CORS
 from werkzeug import secure_filename, exceptions
 from database import db_session, init_db
 from models import Upload
 
 app = Flask(__name__)
-app.debug = True
 app.config['UPLOAD_FOLDER'] = '/tmp/uploads'
-app.config['BASE_URL'] = 'http://myb.lt:5000/'
+app.config['BASE_URL'] = 'http://myb.lt/'
+app.config['API_URL'] = 'http://a.myb.lt/'
 
-cors = CORS(app, resources={r"*": {"origins": "*"}})
 
 def hash_exists(hash):
     return Upload.query.filter(Upload.hash == hash).count() != 0
@@ -60,7 +58,7 @@ def upload_file():
 
         # Generate a short url
         short_id = get_new_short_url()
-        short_url = app.config['BASE_URL'] + 'upload/' + short_id
+        short_url = app.config['API_URL'] + 'upload/' + short_id
 
         # TODO add real mime type
         # Add upload in DB
@@ -70,7 +68,7 @@ def upload_file():
     else:
         # Get old (identical) file's short_url from the hash
         og_upload = Upload.query.filter(Upload.hash == file_hash_bin).first()
-        short_url =  app.config['BASE_URL'] + 'upload/' + og_upload.short_url
+        short_url =  app.config['API_URL'] + 'upload/' + og_upload.short_url
 
     return jsonify(short_url=short_url)
 

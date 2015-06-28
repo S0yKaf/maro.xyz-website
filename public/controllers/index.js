@@ -4,7 +4,7 @@ controllers.controller('Index', function($scope, Upload) {
 
     $scope.upload = function(file) {
         Upload.upload({
-            url: 'http://myb.lt:5000/upload',
+            url: 'http://myb.lt/api/upload',
             file: file
         }).progress(function (evt) {
             var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
