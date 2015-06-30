@@ -1,16 +1,19 @@
 var controllers = angular.module('app.controllers.Index', ['ngFileUpload']);
 
-controllers.controller('Index', function($scope, Upload) {
+controllers.controller('Index', function ($scope, Upload) {
 
-    $scope.upload = function(file) {
+    $scope.upload = function (file) {
+        delete $scope.uploadSuccess;
+
         Upload.upload({
             url: 'http://myb.lt/api/upload',
             file: file
         }).progress(function (evt) {
-            var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
-            console.log('progress: ' + progressPercentage + '% ' + evt.config.file.name);
+            $scope.progress = parseInt(100.0 * evt.loaded / evt.total);
         }).success(function (data, status, headers, config) {
-            console.log('file ' + file[0].name + ' uploaded');
+            $scope.uploadSuccess = {filename: file[0].name, short_url: data.short_url};
+            delete $scope.file;
+            delete $scope.progress;
         });
     }
 });
