@@ -12,6 +12,8 @@ server {
     access_log off;
     error_log off;
 
+    client_max_body_size 50M;
+
     # Allow to contact api on same domain
     location /api/ {
         proxy_set_header X-Real-IP $remote_addr;
@@ -28,6 +30,8 @@ server {
 
     access_log off;
     error_log off;
+
+    client_max_body_size 50M;
 
     location / {
         proxy_set_header X-Real-IP $remote_addr;
