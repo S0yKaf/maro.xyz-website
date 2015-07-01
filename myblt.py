@@ -78,8 +78,10 @@ def upload_file():
 def get_upload(short_url):
     upload = Upload.query.filter(Upload.short_url == short_url).first()
     hash_str = str(binascii.hexlify(upload.hash).decode('utf8'))
+    mimetype = upload.mime_type
 
-    return send_from_directory(app.config['UPLOAD_FOLDER'], hash_str)
+    return send_from_directory(app.config['UPLOAD_FOLDER'],
+        hash_str, mimetype=mimetype, as_attachment=False)
 
 @app.teardown_appcontext
 def shutdown_session(exception=None):
