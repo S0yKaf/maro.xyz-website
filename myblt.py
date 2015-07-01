@@ -52,6 +52,9 @@ def upload_file():
         file_hash_str = str(binascii.hexlify(file_hash_bin).decode('utf8'))
         abs_file = os.path.join(app.config['UPLOAD_FOLDER'], file_hash_str)
 
+        if not os.path.exists(app.config['UPLOAD_FOLDER']):
+            os.makedirs(app.config['UPLOAD_FOLDER'])
+
         file.stream.seek(0)
         file.save(abs_file)
 
