@@ -64,7 +64,7 @@ def upload_file():
 
         # TODO add real mime type
         # Add upload in DB
-        upload = Upload(file_hash_bin, short_id, 'mime')
+        upload = Upload(file_hash_bin, short_id, file.mimetype)
         db_session.add(upload)
         db_session.commit()
     else:
