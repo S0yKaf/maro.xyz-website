@@ -2,6 +2,7 @@ import os
 import hashlib
 import binascii
 import string, random
+import mimetypes
 
 from flask import Flask, request, send_from_directory, jsonify
 from werkzeug import secure_filename, exceptions
@@ -48,9 +49,9 @@ def upload_file():
 
     if not hash_exists(file_hash_bin):
         # Save new file to uploads folder
-        filename = secure_filename(file.filename)
         file_hash_str = str(binascii.hexlify(file_hash_bin).decode('utf8'))
         abs_file = os.path.join(app.config['UPLOAD_FOLDER'], file_hash_str)
+        extension = mimetypes.guess_extension(file.mimetype)
 
         if not os.path.exists(app.config['UPLOAD_FOLDER']):
             os.makedirs(app.config['UPLOAD_FOLDER'])
@@ -59,10 +60,9 @@ def upload_file():
         file.save(abs_file)
 
         # Generate a short url
-        short_id = get_new_short_url()
+        short_id = get_new_short_url() + extension
         short_url = app.config['API_URL'] + short_id
 
-        # TODO add real mime type
         # Add upload in DB
         upload = Upload(file_hash_bin, short_id, file.mimetype)
         db_session.add(upload)
@@ -87,4 +87,5 @@ def shutdown_session(exception=None):
 
 if __name__ == "__main__":
     init_db()
-    app.run()
+    
+app.run()
