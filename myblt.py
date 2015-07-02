@@ -13,6 +13,7 @@ app = Flask(__name__)
 app.debug = True
 app.config['UPLOAD_FOLDER'] = '/tmp/uploads'
 app.config['API_URL'] = 'http://a.myb.lt/'
+app.config['IS_PRIVATE'] = True
 
 
 def hash_exists(hash):
@@ -54,12 +55,13 @@ def get_hash(password, salt):
     m.update(password.encode('utf8'))
     return m.digest()
 
-def get_auth_error():
+def get_auth_error(semi=False):
+    # If app is not configured for private usage, ignore check
+    if semi and not app.config['IS_PRIVATE']:
+        return
+
     token = request.cookies.get('token')
-    if not token:
-        return jsonify({'error': 'Unauthorized'}), 403
-    user = User.query.filter(User.token == token).first()
-    if not user:
+    if not token or not User.query.filter(User.token == token).first():
         return jsonify({'error': 'Unauthorized'}), 403
 
 @app.route('/upload', methods=['POST'])
@@ -67,6 +69,10 @@ def upload_file():
     file = request.files['file']
     if not file:
         return BadRequest
+
+    err = get_auth_error(True)
+    if err:
+        return err
 
     # Get sha1 of uploaded file
     m = hashlib.sha1()
