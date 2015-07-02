@@ -3,9 +3,9 @@ import hashlib
 import binascii
 import string, random
 import mimetypes
+import uuid
 
 from flask import Flask, request, send_from_directory, jsonify, redirect
-from werkzeug import secure_filename, exceptions
 from database import db_session, init_db
 from models import Upload, User
 
@@ -36,6 +36,23 @@ def get_new_short_url():
     while short_url_exists(url):
         url = get_random_short_url()
     return url
+
+def new_user(username, password):
+    # TODO generate new salt with every user
+    salt = "salty"
+    hashpass = get_hash(password, salt)
+
+    user = User(username, hashpass, salt)
+    db_session.add(user)
+    db_session.commit()
+
+    return user
+
+def get_hash(password, salt):
+    m = hashlib.sha512()
+    m.update(salt.encode('utf8'))
+    m.update(password.encode('utf8'))
+    return m.digest()
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
@@ -114,17 +131,19 @@ def login():
     password = req['password']
 
     user = User.query.filter(User.username == username).first()
-    if user:
-        m = hashlib.sha512()
-        m.update(user.salt.encode('utf8'))
-        m.update(password.encode('utf8'))
-        provided_sha512 = m.digest()
+    if user and get_hash(password, user.salt) == user.password:
+        token = uuid.uuid4().hex
+        user.token = token
 
-        if provided_sha512 == user.password:
-            return jsonify({'success': True}
+        db_session.query(User).filter_by(id=user.id) \
+            .update({"token": user.token})
+        db_session.commit()
 
-    return jsonify({'error': 'bad boy'})
+        resp = jsonify({'success': True})
+        resp.set_cookie('token', token)
+        return resp
 
+    return jsonify({'error': 'Please login'}), 401
 
 @app.teardown_appcontext
 def shutdown_session(exception=None):

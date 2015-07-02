@@ -41,6 +41,7 @@ users = Table('users', metadata,
     Column('username', String(255)),
     Column('password', Binary(64)),
     Column('salt', String(42)),
+    Column('token', String(32)),
 )
 
 mapper(Upload, uploads)
