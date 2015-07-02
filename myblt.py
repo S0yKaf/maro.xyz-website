@@ -64,6 +64,10 @@ def get_auth_error(semi=False):
     if not token or not User.query.filter(User.token == token).first():
         return jsonify({'error': 'Unauthorized'}), 403
 
+@app.route('/private', methods=['GET'])
+def is_app_private():
+    return jsonify({'private': app.config['IS_PRIVATE']})
+
 @app.route('/upload', methods=['POST'])
 def upload_file():
     file = request.files['file']
