@@ -13,7 +13,7 @@ app = Flask(__name__)
 app.debug = True
 app.config['UPLOAD_FOLDER'] = '/tmp/uploads'
 app.config['API_URL'] = 'http://a.myb.lt/'
-app.config['IS_PRIVATE'] = True
+app.config['IS_PRIVATE'] = False
 
 
 def hash_exists(hash):
@@ -49,6 +49,28 @@ def new_user(username, password):
 
     return user
 
+def new_upload(file, file_hash_bin):
+    file_hash_str = str(binascii.hexlify(file_hash_bin).decode('utf8'))
+    abs_file = os.path.join(app.config['UPLOAD_FOLDER'], file_hash_str)
+    extension = mimetypes.guess_extension(file.mimetype)
+
+    if not os.path.exists(app.config['UPLOAD_FOLDER']):
+        os.makedirs(app.config['UPLOAD_FOLDER'])
+
+    file.stream.seek(0)
+    file.save(abs_file)
+
+    # Generate a short url
+    short_id = get_new_short_url() + extension
+    short_url = app.config['API_URL'] + short_id
+
+    # Add upload in DB
+    upload = Upload(file_hash_bin, short_id, file.mimetype)
+    db_session.add(upload)
+    db_session.commit()
+
+    return upload
+
 def get_hash(password, salt):
     m = hashlib.sha512()
     m.update(salt.encode('utf8'))
@@ -72,7 +94,7 @@ def is_app_private():
 def upload_file():
     file = request.files['file']
     if not file:
-        return BadRequest
+        return jsonify({'error': 'Bad request'}), 400
 
     err = get_auth_error(True)
     if err:
@@ -83,32 +105,16 @@ def upload_file():
     m.update(file.read())
     file_hash_bin = m.digest()
 
-    if not hash_exists(file_hash_bin):
-        # Save new file to uploads folder
-        file_hash_str = str(binascii.hexlify(file_hash_bin).decode('utf8'))
-        abs_file = os.path.join(app.config['UPLOAD_FOLDER'], file_hash_str)
-        extension = mimetypes.guess_extension(file.mimetype)
-
-        if not os.path.exists(app.config['UPLOAD_FOLDER']):
-            os.makedirs(app.config['UPLOAD_FOLDER'])
-
-        file.stream.seek(0)
-        file.save(abs_file)
-
-        # Generate a short url
-        short_id = get_new_short_url() + extension
-        short_url = app.config['API_URL'] + short_id
-
-        # Add upload in DB
-        upload = Upload(file_hash_bin, short_id, file.mimetype)
-        db_session.add(upload)
-        db_session.commit()
-    else:
+    if hash_exists(file_hash_bin):
         # Get old (identical) file's short_url from the hash
-        og_upload = Upload.query.filter(Upload.hash == file_hash_bin).first()
-        short_url =  app.config['API_URL'] + og_upload.short_url
+        upload = Upload.query.filter(Upload.hash == file_hash_bin).first()
+    else:
+        upload = new_upload(file, file_hash_bin)
 
-    return jsonify(short_url=short_url)
+    if not upload:
+        return jsonify({'error': 'An unknown error occurred'}), 500
+
+    return jsonify(short_url=app.config['API_URL'] + upload.short_url)
 
 @app.route('/<short_url>', methods=['GET'])
 def get_upload(short_url):
@@ -121,7 +127,6 @@ def get_upload(short_url):
     else:
         return send_from_directory(app.config['UPLOAD_FOLDER'],
             hash_str, mimetype=mimetype, as_attachment=False)
-
 
 @app.route('/uploads', methods=['GET'])
 def get_uploads():
@@ -137,7 +142,6 @@ def get_uploads():
         "blocked": upload.blocked
         })
     return jsonify(uploads=objects)
-
 
 @app.route('/block/<short_url>', methods=['GET'])
 def block_upload(short_url):
