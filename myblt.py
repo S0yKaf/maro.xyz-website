@@ -4,7 +4,7 @@ import binascii
 import string, random
 import mimetypes
 
-from flask import Flask, request, send_from_directory, jsonify
+from flask import Flask, request, send_from_directory, jsonify, redirect
 from werkzeug import secure_filename, exceptions
 from database import db_session, init_db
 from models import Upload
@@ -80,8 +80,31 @@ def get_upload(short_url):
     hash_str = str(binascii.hexlify(upload.hash).decode('utf8'))
     mimetype = upload.mime_type
 
-    return send_from_directory(app.config['UPLOAD_FOLDER'],
-        hash_str, mimetype=mimetype, as_attachment=False)
+    if upload.blocked:
+        return redirect("http://myb.lt/#/blocked", code=420)
+    else:
+        return send_from_directory(app.config['UPLOAD_FOLDER'],
+            hash_str, mimetype=mimetype, as_attachment=False)
+
+
+@app.route('/uploads', methods=['GET'])
+def get_uploads():
+    uploads = Upload.query.all()
+    objects = []
+    for upload in uploads:
+        objects.append({
+        "short_url": upload.short_url,
+        "blocked": upload.blocked
+        })
+    return jsonify(uploads=objects)
+
+
+@app.route('/block/<short_url>', methods=['GET'])
+def block_upload(short_url):
+    upload = Upload.query.filter(Upload.short_url == short_url).first()
+    upload.blocked = not upload.blocked
+    db_session.commit()
+    return redirect("#/admin", code=302)
 
 @app.teardown_appcontext
 def shutdown_session(exception=None):
@@ -89,5 +112,5 @@ def shutdown_session(exception=None):
 
 if __name__ == "__main__":
     init_db()
-    
+
 app.run()

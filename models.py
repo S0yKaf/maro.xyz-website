@@ -1,4 +1,4 @@
-from sqlalchemy import Table, Column, Integer, String, Binary
+from sqlalchemy import Table, Column, Integer, String, Binary, Boolean
 from sqlalchemy.orm import mapper
 from database import metadata, db_session
 
@@ -18,7 +18,8 @@ uploads = Table('uploads', metadata,
     Column('id', Integer, primary_key=True),
     Column('hash', Binary(20), unique=True),
     Column('short_url', String(7), unique=True),
-    Column('mime_type', String(255))
+    Column('mime_type', String(255)),
+    Column('blocked', Boolean, default=False)
 )
 
 mapper(Upload, uploads)
