@@ -143,6 +143,8 @@ def block_upload(short_url):
 @app.route('/login', methods=['POST'])
 def login():
     req = request.get_json()
+    if 'username' not in req or 'password' not in req:
+        return jsonify({'error': 'Bad request'}), 400
     username = req['username']
     password = req['password']
 
@@ -159,7 +161,7 @@ def login():
         resp.set_cookie('token', token)
         return resp
 
-    return jsonify({'error': 'Please login'}), 401
+    return jsonify({'error': 'Bad login'}), 401
 
 @app.teardown_appcontext
 def shutdown_session(exception=None):
