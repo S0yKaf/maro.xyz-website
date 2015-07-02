@@ -1,8 +1,8 @@
 import os
 import hashlib
 import binascii
-import string, random
-import mimetypes
+import string
+import random
 import uuid
 
 from flask import Flask, request, send_from_directory, jsonify, redirect
@@ -14,6 +14,7 @@ app.debug = True
 app.config['UPLOAD_FOLDER'] = '/tmp/uploads'
 app.config['API_URL'] = 'http://a.myb.lt/'
 app.config['IS_PRIVATE'] = False
+app.config['DOUBLE_EXTS'] = ['tar']
 
 
 def hash_exists(hash):
@@ -49,10 +50,24 @@ def new_user(username, password):
 
     return user
 
+def get_extension(filename):
+    last_dot_pos = filename.rfind('.')
+    if last_dot_pos < 1:
+        return None
+    ext = filename[last_dot_pos + 1:]
+    double_dot_pos = filename.rfind('.', 0, last_dot_pos - 1)
+    if double_dot_pos == -1:
+        return ext
+    else:
+        double_ext = filename[double_dot_pos + 1:last_dot_pos]
+        if double_ext in app.config['DOUBLE_EXTS']:
+            return double_ext + '.' + ext
+        else:
+            return ext
+
 def new_upload(file, file_hash_bin):
     file_hash_str = str(binascii.hexlify(file_hash_bin).decode('utf8'))
     abs_file = os.path.join(app.config['UPLOAD_FOLDER'], file_hash_str)
-    extension = mimetypes.guess_extension(file.mimetype)
 
     if not os.path.exists(app.config['UPLOAD_FOLDER']):
         os.makedirs(app.config['UPLOAD_FOLDER'])
@@ -60,12 +75,16 @@ def new_upload(file, file_hash_bin):
     file.stream.seek(0)
     file.save(abs_file)
 
-    # Generate a short url
-    short_id = get_new_short_url() + extension
-    short_url = app.config['API_URL'] + short_id
+    # Generate a short id and append extension
+    short_id = get_new_short_url()
+    extension = get_extension(file.filename)
+    if extension:
+        full_id = short_id + '.' + extension
+    else:
+        full_id = short_id
 
     # Add upload in DB
-    upload = Upload(file_hash_bin, short_id, file.mimetype)
+    upload = Upload(file_hash_bin, full_id, file.mimetype)
     db_session.add(upload)
     db_session.commit()
 
