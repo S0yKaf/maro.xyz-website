@@ -54,16 +54,13 @@ def get_hash(password, salt):
     m.update(password.encode('utf8'))
     return m.digest()
 
-def guard(fn):
-    def new_fn(*args, **kwds):
-        token = request.cookies.get('token')
-        if not token:
-            return jsonify({'error': 'Unauthorized'}), 403
-        user = User.query.filter(User.token == token).first()
-        if not user:
-            return jsonify({'error': 'Unauthorized'}), 403
-        return fn()
-    return new_fn
+def get_auth_error():
+    token = request.cookies.get('token')
+    if not token:
+        return jsonify({'error': 'Unauthorized'}), 403
+    user = User.query.filter(User.token == token).first()
+    if not user:
+        return jsonify({'error': 'Unauthorized'}), 403
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
@@ -116,9 +113,12 @@ def get_upload(short_url):
             hash_str, mimetype=mimetype, as_attachment=False)
 
 
-@guard
 @app.route('/uploads', methods=['GET'])
 def get_uploads():
+    err = get_auth_error()
+    if err:
+        return err
+
     uploads = Upload.query.all()
     objects = []
     for upload in uploads:
@@ -129,9 +129,12 @@ def get_uploads():
     return jsonify(uploads=objects)
 
 
-@guard
 @app.route('/block/<short_url>', methods=['GET'])
 def block_upload(short_url):
+    err = get_auth_error()
+    if err:
+        return err
+
     upload = Upload.query.filter(Upload.short_url == short_url).first()
     upload.blocked = not upload.blocked
     db_session.commit()
