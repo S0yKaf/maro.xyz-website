@@ -1,6 +1,6 @@
-var controllers = angular.module('app.controllers.Index', ['ngFileUpload']);
+var controllers = angular.module('app.controllers.Index', ['ngFileUpload', 'ngCookies']);
 
-controllers.controller('Index', function ($scope, Upload) {
+controllers.controller('Index', function ($scope, $http, $cookies, $location, Upload) {
 
     $scope.upload = function (file) {
         delete $scope.uploadSuccess;
@@ -16,4 +16,24 @@ controllers.controller('Index', function ($scope, Upload) {
             delete $scope.progress;
         });
     }
+
+    function isAppPrivate(cb) {
+        $http.get('/api/private')
+            .success(function(data) {
+                cb(data.private);
+            })
+            .error(function(err, status) {
+                $scope.error = {message: err, status: status};
+            });
+    }
+
+    function verify() {
+        isAppPrivate(function (isPrivate) {
+            if (isPrivate && !$cookies.token) {
+                $location.path('/login');
+            }
+        });
+    }
+
+    verify();
 });

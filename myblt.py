@@ -13,6 +13,7 @@ app = Flask(__name__)
 app.debug = True
 app.config['UPLOAD_FOLDER'] = '/tmp/uploads'
 app.config['API_URL'] = 'http://a.myb.lt/'
+app.config['IS_PRIVATE'] = True
 
 
 def hash_exists(hash):
@@ -54,19 +55,28 @@ def get_hash(password, salt):
     m.update(password.encode('utf8'))
     return m.digest()
 
-def get_auth_error():
+def get_auth_error(semi=False):
+    # If app is not configured for private usage, ignore check
+    if semi and not app.config['IS_PRIVATE']:
+        return
+
     token = request.cookies.get('token')
-    if not token:
+    if not token or not User.query.filter(User.token == token).first():
         return jsonify({'error': 'Unauthorized'}), 403
-    user = User.query.filter(User.token == token).first()
-    if not user:
-        return jsonify({'error': 'Unauthorized'}), 403
+
+@app.route('/private', methods=['GET'])
+def is_app_private():
+    return jsonify({'private': app.config['IS_PRIVATE']})
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
     file = request.files['file']
     if not file:
         return BadRequest
+
+    err = get_auth_error(True)
+    if err:
+        return err
 
     # Get sha1 of uploaded file
     m = hashlib.sha1()
@@ -143,6 +153,8 @@ def block_upload(short_url):
 @app.route('/login', methods=['POST'])
 def login():
     req = request.get_json()
+    if 'username' not in req or 'password' not in req:
+        return jsonify({'error': 'Bad request'}), 400
     username = req['username']
     password = req['password']
 
@@ -159,7 +171,7 @@ def login():
         resp.set_cookie('token', token)
         return resp
 
-    return jsonify({'error': 'Please login'}), 401
+    return jsonify({'error': 'Bad login'}), 401
 
 @app.teardown_appcontext
 def shutdown_session(exception=None):
