@@ -7,9 +7,10 @@ import mimetypes
 from flask import Flask, request, send_from_directory, jsonify, redirect
 from werkzeug import secure_filename, exceptions
 from database import db_session, init_db
-from models import Upload
+from models import Upload, User
 
 app = Flask(__name__)
+app.debug = True
 app.config['UPLOAD_FOLDER'] = '/tmp/uploads'
 app.config['API_URL'] = 'http://a.myb.lt/'
 
@@ -106,11 +107,29 @@ def block_upload(short_url):
     db_session.commit()
     return redirect("#/admin", code=302)
 
+@app.route('/login', methods=['POST'])
+def login():
+    req = request.get_json()
+    username = req['username']
+    password = req['password']
+
+    user = User.query.filter(User.username == username).first()
+    if user:
+        m = hashlib.sha512()
+        m.update(user.salt.encode('utf8'))
+        m.update(password.encode('utf8'))
+        provided_sha512 = m.digest()
+
+        if provided_sha512 == user.password:
+            return jsonify({'success': True}
+
+    return jsonify({'error': 'bad boy'})
+
+
 @app.teardown_appcontext
 def shutdown_session(exception=None):
     db_session.remove()
 
 if __name__ == "__main__":
     init_db()
-
-app.run()
+    app.run()
