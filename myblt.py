@@ -11,8 +11,8 @@ from models import Upload, User
 
 app = Flask(__name__)
 app.debug = True
-app.config['UPLOAD_FOLDER'] = '/tmp/uploads'
-app.config['API_URL'] = 'http://a.myb.lt/'
+app.config['UPLOAD_FOLDER'] = '/home/kiniamaro/uploads/'
+app.config['API_URL'] = 'http://a.maro.xyz/'
 app.config['IS_PRIVATE'] = False
 app.config['DOUBLE_EXTS'] = ['tar']
 
@@ -142,7 +142,7 @@ def get_upload(short_url):
     mimetype = upload.mime_type
 
     if upload.blocked:
-        return redirect("http://myb.lt/#/blocked", code=420)
+        return redirect("http://maro.xyz/#/blocked", code=420)
     else:
         return send_from_directory(app.config['UPLOAD_FOLDER'],
             hash_str, mimetype=mimetype, as_attachment=False)
