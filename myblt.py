@@ -201,7 +201,7 @@ if __name__ == "__main__":
 
     if len(sys.argv) == 2:
         conf = sys.argv[1]
-        print('loading additionnal config ' + conf)
+        print('loading additional config ' + conf)
         app.config.from_pyfile('config/' + conf + '_config.py')
 
     init_engine(app.config['DATABASE_URI'])
