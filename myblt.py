@@ -4,18 +4,14 @@ import binascii
 import string
 import random
 import uuid
+import sys
 
 from flask import Flask, request, send_from_directory, jsonify, redirect
-from database import db_session, init_db
+from database import db_session, init_db, init_engine
+
 from models import Upload, User
 
 app = Flask(__name__)
-app.debug = True
-app.config['UPLOAD_FOLDER'] = '/tmp/uploads'
-app.config['API_URL'] = 'http://a.myb.lt/'
-app.config['IS_PRIVATE'] = False
-app.config['DOUBLE_EXTS'] = ['tar']
-
 
 def hash_exists(hash):
     return Upload.query.filter(Upload.hash == hash).count() != 0
@@ -201,5 +197,13 @@ def shutdown_session(exception=None):
     db_session.remove()
 
 if __name__ == "__main__":
+    app.config.from_pyfile('config/default_config.py')
+
+    if len(sys.argv) == 2:
+        conf = sys.argv[1]
+        print('loading additional config ' + conf)
+        app.config.from_pyfile('config/' + conf + '_config.py')
+
+    init_engine(app.config['DATABASE_URI'])
     init_db()
     app.run()

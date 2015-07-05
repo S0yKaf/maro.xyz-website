@@ -1,12 +1,17 @@
 from sqlalchemy import create_engine, MetaData
-from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy.orm import scoped_session, create_session
 
-engine = create_engine('sqlite:////tmp/test.db', convert_unicode=True)
-#engine = create_engine('mysql://myblt@localhost/myblt', convert_unicode=True)
-
+engine = None
 metadata = MetaData()
-db_session = scoped_session(sessionmaker(autocommit=False,
-                                         autoflush=False,
-                                         bind=engine))
+
+db_session = scoped_session(
+    lambda: create_session(autocommit=False, autoflush=False, bind=engine))
+
+def init_engine(uri):
+    global engine
+    engine = create_engine(uri, convert_unicode=True)
+    return engine
+
 def init_db():
+    global engine
     metadata.create_all(bind=engine)
