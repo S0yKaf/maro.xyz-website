@@ -9,3 +9,7 @@
 .dragover {
     border: 5px dashed blue;
 }
+
+.alerts {
+    margin-top: 15px;
+}
