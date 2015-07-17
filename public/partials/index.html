@@ -4,14 +4,6 @@
     </div>
 
     <div class="row">
-        <div class="col-sm-8 col-md-offset-2">
-            <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">
-                <span ng-bind-html="alert.msg"></span>
-            </alert>
-        </div>
-    </div>
-
-    <div class="row">
         <div class="col-md-4 col-md-offset-4">
             <div class="drop-box" ngf-drag-over-class="dragover" ngf-select ngf-drop ng-model="file">Select file or drop here</div>
         </div>
@@ -30,6 +22,14 @@
     <div class="row" ng-show="progress">
         <div class="progress">
             <div class="progress-bar" style="width: {{progress}}%;"></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-8 col-md-offset-2">
+            <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">
+                <span ng-bind-html="alert.msg"></span>
+            </alert>
         </div>
     </div>
     <div ngf-no-file-drop>File Drag/Drop is not supported for this browser</div>
