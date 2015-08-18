@@ -24,11 +24,11 @@ Everyone can see files but only members can upload new files.
 
 ##### Create a virtualenv
 
-`virtualenv myblt`
+`virtualenv env`
 
 ##### Active the virtualenv in the current shell
 
-`. myblt/bin/activate`
+`. env/bin/activate`
 
 `pip install -r requirements.txt`
 

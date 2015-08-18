@@ -1,4 +1,13 @@
-var app = angular.module('myblt', ['ngRoute', 'ngFileUpload', 'ngCookies', 'app.controllers.Index', 'app.controllers.Admin', 'app.controllers.Login'])
+var app = angular.module('myblt', [
+    'ngRoute',
+    'ngFileUpload',
+    'ngCookies',
+    'ui.bootstrap',
+    'ngSanitize',
+    'app.controllers.Index',
+    'app.controllers.Admin',
+    'app.controllers.Login',
+])
 
 app.config(['$routeProvider', '$httpProvider', function($routeProvider) {
     $routeProvider
