@@ -146,11 +146,15 @@ def upload_file():
 @app.route('/<short_url>', methods=['GET'])
 def get_upload(short_url):
     upload = Upload.query.filter(Upload.short_url == short_url).first()
+
+    if not upload:
+        return '404 not found'
+
     hash_str = str(binascii.hexlify(upload.hash).decode('utf8'))
     mimetype = upload.mime_type
 
     if upload.blocked:
-        return redirect("http://myb.lt/#/blocked", code=420)
+        return redirect("/#/blocked", code=420)
     else:
         return send_from_directory(
             app.config['UPLOAD_FOLDER'],
