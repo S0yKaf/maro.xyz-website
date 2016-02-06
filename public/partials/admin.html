@@ -1,6 +1,6 @@
 <div class="container">
     <h1> ADMIN </h1>
     <div ng-repeat="upload in uploads">
-        <a href="http://a.myb.lt/{{upload.short_url}}">http://a.myb.lt/{{upload.short_url}} </a> | Blocked: {{upload.blocked}} | <a href="/api/block/{{upload.short_url}}"> [BLOCK] </a>
+        <a href="/api/{{upload.short_url}}">{{upload.short_url}} </a> | Blocked: {{upload.blocked}} | <a href="/api/block/{{upload.short_url}}"> [BLOCK] </a>
     </div>
 </div>
