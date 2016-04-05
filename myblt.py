@@ -138,7 +138,7 @@ def get_upload(short_url):
     mimetype = upload.mime_type
 
     if upload.blocked:
-        return redirect("http://maro.xyz/#/blocked", code=420)
+        return redirect("https://maro.xyz/#/blocked", code=301)
     else:
         return send_from_directory(app.config['UPLOAD_FOLDER'],
             hash_str, mimetype=mimetype, as_attachment=False)

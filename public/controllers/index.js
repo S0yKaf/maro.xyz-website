@@ -11,7 +11,7 @@ controllers.controller('Index', function ($scope, $http, $cookies, $location, $s
         delete $scope.uploadSuccess;
 
         Upload.upload({
-            url: 'http://maro.xyz/api/upload',
+            url: 'https://maro.xyz/api/upload',
             file: file
         }).progress(function (evt) {
             $scope.progress = parseInt(100.0 * evt.loaded / evt.total);
