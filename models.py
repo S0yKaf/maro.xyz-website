@@ -29,20 +29,20 @@ class User():
 
 
 uploads = Table('uploads', metadata,
-    Column('id', Integer, primary_key=True),
-    Column('hash', Binary(20), unique=True),
-    Column('short_url', String(7), unique=True),
-    Column('mime_type', String(255)),
-    Column('blocked', Boolean, default=False),
-)
+                Column('id', Integer, primary_key=True),
+                Column('hash', Binary(20), unique=True),
+                Column('short_url', String(7), unique=True),
+                Column('mime_type', String(255)),
+                Column('blocked', Boolean, default=False),
+                )
 
 users = Table('users', metadata,
-    Column('id', Integer, primary_key=True),
-    Column('username', String(255)),
-    Column('password', Binary(64)),
-    Column('salt', String(42)),
-    Column('token', String(32)),
-)
+              Column('id', Integer, primary_key=True),
+              Column('username', String(255)),
+              Column('password', Binary(64)),
+              Column('salt', String(42)),
+              Column('token', String(32)),
+              )
 
 mapper(Upload, uploads)
 mapper(User, users)

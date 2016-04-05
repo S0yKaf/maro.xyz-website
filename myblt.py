@@ -13,13 +13,16 @@ from models import Upload, User
 
 app = Flask(__name__)
 
+
 def hash_exists(hash):
     return Upload.query.filter(Upload.hash == hash).count() != 0
+
 
 def short_url_exists(url):
     if not url:
         return True
     return Upload.query.filter(Upload.short_url == url).count() != 0
+
 
 def get_random_short_url():
     """Generates a random string of 7 ascii letters and digits
@@ -28,12 +31,14 @@ def get_random_short_url():
     pool = string.ascii_letters + string.digits
     return ''.join(random.choice(pool) for _ in range(7))
 
+
 def get_new_short_url():
     """Generate random urls until a new one is generated"""
     url = None
     while short_url_exists(url):
         url = get_random_short_url()
     return url
+
 
 def new_user(username, password):
     # TODO generate new salt with every user
@@ -45,6 +50,7 @@ def new_user(username, password):
     db_session.commit()
 
     return user
+
 
 def get_extension(filename):
     last_dot_pos = filename.rfind('.')
@@ -60,6 +66,7 @@ def get_extension(filename):
             return double_ext + '.' + ext
         else:
             return ext
+
 
 def new_upload(file, file_hash_bin):
     file_hash_str = str(binascii.hexlify(file_hash_bin).decode('utf8'))
@@ -86,11 +93,13 @@ def new_upload(file, file_hash_bin):
 
     return upload
 
+
 def get_hash(password, salt):
     m = hashlib.sha512()
     m.update(salt.encode('utf8'))
     m.update(password.encode('utf8'))
     return m.digest()
+
 
 def get_auth_error(semi=False):
     # If app is not configured for private usage, ignore check
@@ -101,9 +110,11 @@ def get_auth_error(semi=False):
     if not token or not User.query.filter(User.token == token).first():
         return jsonify({'error': 'Unauthorized'}), 403
 
+
 @app.route('/private', methods=['GET'])
 def is_app_private():
     return jsonify({'private': app.config['IS_PRIVATE']})
+
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
@@ -131,17 +142,24 @@ def upload_file():
 
     return jsonify(short_url=app.config['API_URL'] + upload.short_url)
 
+
 @app.route('/<short_url>', methods=['GET'])
 def get_upload(short_url):
     upload = Upload.query.filter(Upload.short_url == short_url).first()
+
+    if not upload:
+        return '404 not found'
+
     hash_str = str(binascii.hexlify(upload.hash).decode('utf8'))
     mimetype = upload.mime_type
 
     if upload.blocked:
         return redirect("https://maro.xyz/#/blocked", code=301)
     else:
-        return send_from_directory(app.config['UPLOAD_FOLDER'],
+        return send_from_directory(
+            app.config['UPLOAD_FOLDER'],
             hash_str, mimetype=mimetype, as_attachment=False)
+
 
 @app.route('/uploads', methods=['GET'])
 def get_uploads():
@@ -153,10 +171,11 @@ def get_uploads():
     objects = []
     for upload in uploads:
         objects.append({
-        "short_url": upload.short_url,
-        "blocked": upload.blocked
+            "short_url": upload.short_url,
+            "blocked": upload.blocked
         })
     return jsonify(uploads=objects)
+
 
 @app.route('/block/<short_url>', methods=['GET'])
 def block_upload(short_url):
@@ -168,6 +187,7 @@ def block_upload(short_url):
     upload.blocked = not upload.blocked
     db_session.commit()
     return redirect("#/admin", code=302)
+
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -192,6 +212,7 @@ def login():
 
     return jsonify({'error': 'Bad login'}), 401
 
+
 @app.teardown_appcontext
 def shutdown_session(exception=None):
     db_session.remove()
@@ -201,7 +222,7 @@ if __name__ == "__main__":
 
     if len(sys.argv) == 2:
         conf = sys.argv[1]
-        print('loading additional config ' + conf)
+        print('Loading additional config %s...', conf)
         app.config.from_pyfile('config/' + conf + '_config.py')
 
     init_engine(app.config['DATABASE_URI'])
