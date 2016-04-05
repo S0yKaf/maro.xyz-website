@@ -1,3 +1,10 @@
+.body {
+    background-image: url(yui.png);
+    background-size: 150px;
+    background-position: bottom right;
+    background-repeat: no-repeat;
+}
+
 .drop-box {
     margin: auto;
     background: #F8F8F8;

@@ -1,5 +1,5 @@
 DEBUG = True
-UPLOAD_FOLDER = '/home/kiniamaro/uploads'
+UPLOAD_FOLDER = '/tmp/maro_uploads'
 API_URL = 'http://a.maro.xyz/'
 IS_PRIVATE = False
 DOUBLE_EXTS = ['tar']
