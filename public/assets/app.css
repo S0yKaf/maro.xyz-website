@@ -7,12 +7,18 @@
 
 .drop-box {
     margin: auto;
-    background: #F8F8F8;
-    color: #ccc;
-    border: 5px dashed #DDD;
+    background: rgba(85, 65, 225, 0.30);
+    color: #403c8a;
+    border: 5px dashed #403c8a;
     line-height: 180px;
     text-align: center
 }
+
+.drop-box:hover {
+  background: rgba(65, 45, 205, 0.45);
+  color: rgb(44, 40, 118);
+}
+
 .dragover {
     border: 5px dashed blue;
 }
