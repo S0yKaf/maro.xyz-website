@@ -1,10 +1,3 @@
-.body {
-    background-image: url(yui.png);
-    background-size: 150px;
-    background-position: bottom right;
-    background-repeat: no-repeat;
-}
-
 .drop-box {
     margin: auto;
     background: rgba(85, 65, 225, 0.30);
@@ -25,4 +18,40 @@
 
 .alerts {
     margin-top: 15px;
+}
+
+body {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  background-color: #FAFAFA
+}
+
+main {
+  flex: 1 0 auto;
+}
+
+.col {
+  margin: .5em;
+  box-sizing:border-box;
+}
+
+.btn-large {
+  margin-top: .75em;
+}
+
+.footer-copyright {
+  padding-left: 1em;
+  padding-right: 1em;
+}
+
+.brand-logo {
+  margin-left: 1em;
+}
+
+#waifu {
+  position: absolute;
+  bottom: 25px;
+  right: 0px;
+  z-index: -1;
 }

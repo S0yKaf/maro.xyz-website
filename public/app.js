@@ -2,7 +2,6 @@ var app = angular.module('myblt', [
     'ngRoute',
     'ngFileUpload',
     'ngCookies',
-    'ui.bootstrap',
     'ngSanitize',
     'app.controllers.Index',
     'app.controllers.Admin',

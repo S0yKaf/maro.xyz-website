@@ -14,10 +14,11 @@
   "dependencies": {
     "angular": "~1.3.15",
     "angular-route": "~1.3.15",
-    "bootswatch-dist": "lumen",
-    "angular-bootstrap": "~0.13.0",
     "ng-file-upload": "~5.0.9",
     "angular-cookies": "1.3.16",
-    "angular-sanitize": "1.3.16"
+    "angular-sanitize": "1.3.16",
+    "Materialize": "materialize#^0.97.6",
+    "font-awesome": "^4.6.3",
+    "components-font-awesome": "^4.6.3"
   }
 }
