@@ -17,9 +17,11 @@ controllers.controller('Index', function ($scope, $http, $cookies, $location, $s
             $scope.progress = parseInt(100.0 * evt.loaded / evt.total);
         }).success(function (data, status, headers, config) {
             $scope.uploadSuccess = {filename: file[0].name, short_url: data.short_url};
+            var url = data.short_url;
             var msg = file[0].name + ' uploaded to <a style="color: #314F00" href="' + data.short_url + '">'+data.short_url+'</a>';
             var trusted =  $scope.thisCanBeusedInsideNgBindHtml = $sce.trustAsHtml(msg);
             var alert = {
+                url: url,
                 msg: trusted,
                 type: 'success'};
                 console.log(alert);

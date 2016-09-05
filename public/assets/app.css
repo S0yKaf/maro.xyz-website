@@ -4,6 +4,7 @@
     color: #403c8a;
     border: 5px dashed #403c8a;
     line-height: 180px;
+    width: 300px;
     text-align: center
 }
 
@@ -18,6 +19,7 @@
 
 .alerts {
     margin-top: 15px;
+    margin-bottom: 5px;
 }
 
 body {
