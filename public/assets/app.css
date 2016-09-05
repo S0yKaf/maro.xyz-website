@@ -1,8 +1,8 @@
 .drop-box {
     margin: auto;
     background: rgba(85, 65, 225, 0.30);
-    color: #403c8a;
-    border: 5px dashed #403c8a;
+    color: #673ab7;
+    border: 5px solid #512da8;
     line-height: 180px;
     width: 300px;
     text-align: center
