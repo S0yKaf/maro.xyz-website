@@ -188,7 +188,6 @@ def get_uploads():
 
 
 @app.route('/block/<short_url>', methods=['GET'])
-# TODO change this to a POST
 def block_upload(short_url):
     err = get_auth_error()
     if err:
@@ -197,7 +196,7 @@ def block_upload(short_url):
     upload = Upload.query.filter(Upload.short_url == short_url).first()
     upload.blocked = not upload.blocked
     db_session.commit()
-    return redirect("#/admin", code=302)
+    return jsonify({'success': True}), 200
 
 
 @app.route('/login', methods=['POST'])

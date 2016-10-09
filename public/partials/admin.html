@@ -1,7 +1,7 @@
 <div class="container">
     <h1> ADMIN </h1>
     <div ng-repeat="upload in uploads" ng-visible="!error">
-        <a href="/api/{{upload.short_url}}">{{upload.short_url}} </a> | Blocked: {{upload.blocked}} | <a href="/api/block/{{upload.short_url}}"> [BLOCK] </a>
+        <a href="/api/{{upload.short_url}}">{{upload.short_url}} </a> | Blocked: {{upload.blocked}} | <a ng-click="block(upload)"> [BLOCK] </a>
     </div>
     <div ng-visible="error">
       <p class="text-warning"><strong>Please login First</strong></p>
