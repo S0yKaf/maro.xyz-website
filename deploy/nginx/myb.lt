@@ -1,13 +1,13 @@
-upstream app_myblt {
+upstream app_maro.xyz {
     server 127.0.0.1:5000;
     keepalive 16;
 }
 
 server {
-    root /opt/myblt/public;
+    root /opt/maro.xyz/public;
     index index.html;
 
-    server_name myb.lt www.myb.lt;
+    server_name maro.xyz www.maro.xyz;
 
     access_log off;
     error_log off;
@@ -21,12 +21,12 @@ server {
         proxy_set_header Host $http_host;
         proxy_set_header X-NginX-Proxy true;
 
-        proxy_pass http://app_myblt/;
+        proxy_pass http://app_maro.xyz/;
     }
 }
 
 server {
-    server_name a.myb.lt;
+    server_name a.maro.xyz;
 
     access_log off;
     error_log off;
@@ -39,6 +39,6 @@ server {
         proxy_set_header Host $http_host;
         proxy_set_header X-NginX-Proxy true;
 
-        proxy_pass http://app_myblt/;
+        proxy_pass http://app_maro.xyz/;
     }
 }

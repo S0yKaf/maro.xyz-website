@@ -1,15 +1,15 @@
-# myblt-website
+# maro.xyz-website
 My blt provides a simple platform for general file upload. It features a public and private mode.
- 
-A [cli client](https://github.com/myblt/myblt-client) can be used to upload files or directly via the website.
- 
+
+A [cli client](https://github.com/kiniamaro/maro.xyz-website) can be used to upload files or directly via the website.
+
 ### Public mode
 Everyone can upload and retreive files.
- 
+
 ### Private mode
 Everyone can see files but only members can upload new files.
 
-## Hacking on myblt
+## Hacking on maro.xyz
 
 ### Requirements
 * Python 3
@@ -18,9 +18,9 @@ Everyone can see files but only members can upload new files.
 * nginx
 * virtualenv (recommended)
 
-`git clone git@github.com:myblt/myblt-website.git` 
+`git clone git@github.com:maro.xyz/maro.xyz-website.git`
 
-`cd myblt-website`
+`cd maro.xyz-website`
 
 ##### Create a virtualenv
 
@@ -50,4 +50,4 @@ Everyone can see files but only members can upload new files.
 
 ##### Profit !
 
-`firefox http://myb.lt`
+`firefox https://maro.xyz`
