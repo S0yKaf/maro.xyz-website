@@ -1,9 +1,11 @@
 <div class="container">
     <h1> ADMIN </h1>
-    <div ng-repeat="upload in uploads" ng-visible="!error">
-        <a href="/api/{{upload.short_url}}">{{upload.short_url}} </a> | Blocked: {{upload.blocked}} | <a ng-click="block(upload)"> [BLOCK] </a>
-    </div>
-    <div ng-visible="error">
-      <p class="text-warning"><strong>Please login First</strong></p>
+    <div ng-repeat="upload in uploads" ng-visible="!error" class="row">
+        <div class="col s2 center z-depth-1">
+            <img src="/assets/file.png" width="125px"/><br />
+            <a href="/api/{{upload.short_url}}">{{upload.short_url}} </a><br />
+            <span> Blocked: {{upload.blocked}} </span><br />
+            <a href="" ng-click="block(upload)"> [BLOCK] </a>
+        </div>
     </div>
 </div>

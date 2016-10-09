@@ -182,7 +182,8 @@ def get_uploads():
     for upload in uploads:
         objects.append({
             "short_url": upload.short_url,
-            "blocked": upload.blocked
+            "blocked": upload.blocked,
+            "mime_type": upload.mime_type,
         })
     return jsonify(uploads=objects)
 
