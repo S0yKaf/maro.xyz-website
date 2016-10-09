@@ -34,7 +34,7 @@ controllers.controller('Index', function ($scope, $http, $cookies, $location, $s
             if (status == 413) {
                 $scope.alerts.push({msg: 'Your file is too big !', type: 'danger'});
             } else {
-                $scope.alerts.push({msg: 'An error occurred while uploading your file.', type: 'danger'});
+                $scope.alerts.push({msg: data.error, type: 'danger'});
             }
             delete $scope.file;
             delete $scope.progress;

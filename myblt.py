@@ -68,6 +68,13 @@ def get_extension(filename):
             return ext
 
 
+def extension_blocked(file):
+    extension = get_extension(file.filename)
+    blacklist = app.config['BLACKLIST_EXTENSIONS']
+
+    return extension in blacklist
+
+
 def new_upload(file, file_hash_bin):
     file_hash_str = str(binascii.hexlify(file_hash_bin).decode('utf8'))
     abs_file = os.path.join(app.config['UPLOAD_FOLDER'], file_hash_str)
@@ -121,6 +128,9 @@ def upload_file():
     file = request.files['file']
     if not file:
         return jsonify({'error': 'Bad request'}), 400
+
+    if extension_blocked(file):
+        return jsonify({'error': 'File type not allowed'}), 400
 
     err = get_auth_error(True)
     if err:
@@ -178,6 +188,7 @@ def get_uploads():
 
 
 @app.route('/block/<short_url>', methods=['GET'])
+# TODO change this to a POST
 def block_upload(short_url):
     err = get_auth_error()
     if err:
