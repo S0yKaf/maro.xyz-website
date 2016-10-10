@@ -17,6 +17,7 @@ Everyone can see files but only members can upload new files.
 * bower
 * nginx
 * virtualenv (recommended)
+* imagemagick
 
 `git clone git@github.com:maro.xyz/maro.xyz-website.git`
 
