@@ -1,8 +1,9 @@
 <div class="container">
-    <h1> ADMIN </h1>
-    <div ng-repeat="upload in uploads" ng-visible="!error" class="row">
-        <div class="col s2 center z-depth-1">
-            <img src="/assets/file.png" width="125px"/><br />
+    <h1> ADMIN PANEL</h1>
+    <div class="row">
+        <div ng-repeat="upload in uploads" ng-visible="!error" class="col s2 center z-depth-1">
+            <img ng-if="isImage(upload)" onerror="this.src='/assets/file.png'" src="/assets/thumbnails/{{upload.hash}}.thumb.jpg"/>
+            <img ng-if="!isImage(upload)" src="/assets/file.png"><br />
             <a href="/api/{{upload.short_url}}">{{upload.short_url}} </a><br />
             <span> Blocked: {{upload.blocked}} </span><br />
             <a href="" ng-click="block(upload)"> [BLOCK] </a>

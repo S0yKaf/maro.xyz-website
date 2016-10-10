@@ -18,4 +18,8 @@ controllers.controller('Admin', function ($scope, $http, $window) {
                     $scope.error = {message: err, status: status};
                 })
         }
+
+        $scope.isImage = function (upload) {
+            return upload.mime_type.includes('image');
+        }
 });

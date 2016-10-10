@@ -5,9 +5,12 @@ import string
 import random
 import uuid
 import sys
+import math
 
 from flask import Flask, request, send_from_directory, jsonify, redirect
 from database import db_session, init_db, init_engine
+
+from wand.image import Image
 
 from models import Upload, User
 
@@ -85,6 +88,14 @@ def new_upload(file, file_hash_bin):
     file.stream.seek(0)
     file.save(abs_file)
 
+    # thumbnail generation
+    if 'image' in file.mimetype:
+        with Image(filename=abs_file) as img:
+            ratio = img.width / img.height
+            img.format = 'jpeg'
+            img.transform(resize='125x125')
+            img.save(filename='public/assets/thumbnails/' +
+                     file_hash_str + '.thumb.jpg')
     # Generate a short id and append extension
     short_id = get_new_short_url()
     extension = get_extension(file.filename)
@@ -183,6 +194,7 @@ def get_uploads():
         objects.append({
             "short_url": upload.short_url,
             "blocked": upload.blocked,
+            "hash": str(binascii.hexlify(upload.hash).decode('utf8')),
             "mime_type": upload.mime_type,
         })
     return jsonify(uploads=objects)

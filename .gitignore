@@ -7,6 +7,7 @@ __pycache__/
 
 # Repo stuff
 default_config.py
+public/assets/thumbnails/*.thumb.jpg
 
 # Distribution / packaging
 .Python
