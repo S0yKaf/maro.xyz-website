@@ -16,3 +16,9 @@ app.config(['$routeProvider', '$httpProvider', function($routeProvider) {
         .when('/login', {templateUrl: 'partials/login.html', controller: 'Login',});
     $routeProvider.otherwise({redirectTo: '/'});
 }]);
+
+app.filter('reverse', function() {
+  return function(items) {
+    return items.slice().reverse();
+  };
+});

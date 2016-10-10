@@ -1,7 +1,7 @@
 <div class="container">
     <h1> ADMIN PANEL</h1>
     <div class="row">
-        <div ng-repeat="upload in uploads" ng-visible="!error" class="col s2 center z-depth-1">
+        <div ng-repeat="upload in uploads | reverse" ng-visible="!error" class="col s2 center z-depth-1">
             <img ng-if="isImage(upload)" onerror="this.src='/assets/file.png'" src="/assets/thumbnails/{{upload.hash}}.thumb.jpg"/>
             <img ng-if="!isImage(upload)" src="/assets/file.png"><br />
             <a href="/api/{{upload.short_url}}">{{upload.short_url}} </a><br />
