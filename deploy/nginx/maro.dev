@@ -1,0 +1,44 @@
+upstream app_maro.xyz {
+    server 127.0.0.1:5000;
+    keepalive 16;
+}
+
+server {
+    root /opt/maro.xyz/public;
+    index index.html;
+
+    server_name test.maro.xyz api-test.maro.xyz;
+
+    access_log off;
+    error_log off;
+
+    client_max_body_size 50M;
+
+    # Allow to contact api on same domain
+    location /api/ {
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $remote_addr;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-NginX-Proxy true;
+
+        proxy_pass http://app_maro.xyz/;
+    }
+}
+
+server {
+    server_name a.maro.xyz;
+
+    access_log off;
+    error_log off;
+
+    client_max_body_size 50M;
+
+    location / {
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $remote_addr;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-NginX-Proxy true;
+
+        proxy_pass http://app_maro.xyz/;
+    }
+}
