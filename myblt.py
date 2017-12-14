@@ -141,9 +141,7 @@ def get_hash(password, salt):
 
 def get_admin_status():
     token = request.cookies.get('token')
-    print(token)
     user = User.query.filter(User.token == token).first()
-    print(user.is_admin)
     if not token or not user.is_admin:
         return jsonify({'error': 'Unauthorized'}), 403
 
@@ -215,7 +213,6 @@ def get_upload(short_url):
 def get_uploads():
 
     err = get_admin_status()
-    print(err)
     if err:
         return err
 
