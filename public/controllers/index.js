@@ -59,5 +59,16 @@ controllers.controller('Index', function ($scope, $http, $cookies, $location, $s
         });
     }
 
-    verify();
+    function loggedIn() {
+      isAppPrivate(function (isPrivate) {
+          if (isPrivate && $cookies.token) {
+              var loginButton = document.getElementById('login');
+              // Sue me.
+              loginButton.innerHTML = 'Invites';
+              loginButton.href = '#/invites';
+          }
+      });
+    }
+
+    loggedIn();
 });

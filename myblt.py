@@ -12,7 +12,7 @@ from database import db_session, init_db, init_engine
 
 from wand.image import Image
 
-from models import Upload, User
+from models import Upload, User, Invite
 
 app = Flask(__name__)
 
@@ -43,9 +43,29 @@ def get_new_short_url():
     return url
 
 
+def generate_invite_code(user):
+    pool = string.ascii_letters + string.digits
+    code = ''.join(random.choice(pool) for _ in range(32))
+
+    invite_code = Invite(code, user.id)
+    db_session.add(invite_code)
+    db_session.commit()
+
+    return code
+
+
+def verify_invite_code(invite_code):
+    code = Invite.query.filter(Invite.code == invite_code).first()
+    return code and not code.redeemed
+
+
+def get_user_invite_codes(user):
+    user_id = user_id
+    return Invite.query.filter(Invite.creator_id == user.id).all()
+
+
 def new_user(username, password):
-    # TODO generate new salt with every user
-    salt = "salty"
+    salt = app.config['SALT']
     hashpass = get_hash(password, salt)
 
     user = User(username, hashpass, salt)
@@ -119,6 +139,15 @@ def get_hash(password, salt):
     return m.digest()
 
 
+def get_admin_status():
+    token = request.cookies.get('token')
+    print(token)
+    user = User.query.filter(User.token == token).first()
+    print(user.is_admin)
+    if not token or not user.is_admin:
+        return jsonify({'error': 'Unauthorized'}), 403
+
+
 def get_auth_error(semi=False):
     # If app is not configured for private usage, ignore check
     if semi and not app.config['IS_PRIVATE']:
@@ -184,7 +213,9 @@ def get_upload(short_url):
 
 @app.route('/uploads', methods=['GET'])
 def get_uploads():
-    err = get_auth_error()
+
+    err = get_admin_status()
+    print(err)
     if err:
         return err
 
@@ -234,6 +265,63 @@ def login():
         return resp
 
     return jsonify({'error': 'Bad login'}), 401
+
+
+@app.route('/CreateInviteCode', methods=['GET'])
+def create_invite_code():
+    if not app.config['IS_PRIVATE']:
+        return jsonify({'error': 'Site must be in private mode.'}), 501
+
+    err = get_auth_error()
+    if err:
+        return err
+
+    token = request.cookies.get('token')
+    user = User.query.filter(User.token == token).first()
+    code = generate_invite_code(user)
+    return jsonify(invite_code=code)
+
+
+@app.route('/InviteCodes', methods=['GET'])
+def get_invite_codes():
+    if not app.config['IS_PRIVATE']:
+        return jsonify({'error': 'Site must be in private mode.'}), 501
+
+    err = get_auth_error()
+    if err:
+        return err
+
+    token = request.cookies.get('token')
+    user = User.query.filter(User.token == token).first()
+
+    codes = Invite.query.filter(Invite.creator_id == user.id).all()
+    objects = []
+    for code in codes:
+        objects.append({
+            "code": code.code,
+            "redeemed": code.redeemed,
+        })
+    return jsonify(codes=objects)
+
+
+@app.route('/register', methods=['POST'])
+def register():
+    req = request.get_json()
+    if 'username' not in req or 'password' not in req \
+       or 'invite_code' not in req:
+        return jsonify({'error': 'Bad request'}), 400
+
+    username = req['username']
+    password = req['password']
+    invite_code = req['invite_code']
+
+    if not verify_invite_code(invite_code):
+        return jsonify({'error': 'Invalid invite code'}), 400
+
+    new_user(username, password)
+    Invite.query.filter(Invite.code == invite_code).first().redeemed = True
+    db_session.commit()
+    return jsonify({'success': True})
 
 
 @app.teardown_appcontext

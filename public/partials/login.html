@@ -3,7 +3,7 @@
         <h1>Login</h1>
     </div>
     <div class="col-sm-offset-3 col-sm-6 col-md-6">
-        <div ng-show="error" class="alert alert-danger text-center">{{error.message}}</div>
+        <div ng-show="error" class="red-text text-center">{{error.message}}</div>
     </div>
     <form name="login" class="form-horizontal" ng-submit="submitLogin()">
         <div class="form-group">
@@ -22,5 +22,5 @@
             </div>
         </div>
     </form>
-    <p class="text-center text-info">Used by admins to moderate uploaded content (ex: remove CP).</p>
+    <p class="text-center text-info">You have an invite code? <a href="#/register">Register Here.</a></p>
 </div>
