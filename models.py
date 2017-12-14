@@ -19,10 +19,11 @@ class Upload():
 class User():
     query = db_session.query_property()
 
-    def __init__(self, username, password, salt):
+    def __init__(self, username, password, salt, is_admin=False):
         self.username = username
         self.password = password
         self.salt = salt
+        self.is_admin = is_admin
 
     def __repr__(self):
         return '<User %r>' % (self.username)
