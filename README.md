@@ -35,7 +35,7 @@ Everyone can see files but only members can upload new files.
 
 `bower install`
 
-`cp deploy/nginx/myb.lt /etc/nginx/sites-enabled/`
+`cp deploy/nginx/maro.dev /etc/nginx/sites-enabled/`
 
 ##### Change the config file `/etc/nginx/sites-enabled/myb.lt` to your repo's `public/` folder
 
@@ -43,7 +43,10 @@ Everyone can see files but only members can upload new files.
 
 ##### "Temporary"
 
-`sudo sh -c "echo '127.0.0.1 myb.lt a.myb.lt' >> /etc/hosts"`
+`sudo sh -c "echo '127.0.0.1 test.maro.xyz api-test.maro.xyz' >> /etc/hosts"`
+
+#### Change the base href in index.html for development
+`<base href="http://test.maro.xyz/">`
 
 ##### Start the application
 
@@ -51,4 +54,4 @@ Everyone can see files but only members can upload new files.
 
 ##### Profit !
 
-`firefox https://maro.xyz`
+`firefox http://test.maro.xyz`
