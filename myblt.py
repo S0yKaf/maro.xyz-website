@@ -64,11 +64,11 @@ def get_user_invite_codes(user):
     return Invite.query.filter(Invite.creator_id == user.id).all()
 
 
-def new_user(username, password):
+def new_user(username, password, is_admin=False):
     salt = app.config['SALT']
     hashpass = get_hash(password, salt)
 
-    user = User(username, hashpass, salt)
+    user = User(username, hashpass, salt, is_admin)
     db_session.add(user)
     db_session.commit()
 
